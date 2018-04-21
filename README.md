@@ -6,10 +6,12 @@ A bare metal physical implementation of WebAssembly. That's right, a WebAssembly
 ## Roadmap
 
 - [ ] Understand the WebAssembly ISA
-- [ ] Create a microarchitecture GUI simulator in HTML/CSS/JavaScript
+- [ ] Implement the mircoarchitecture in HTML/CSS/JavaScript
+  * This will be a GUI simulator of the microarchitecture
   * This simulator will become the specification for the microarchitecture
   * It will allow us to quickly experiment with hardware configurations
   * It will allow us to iterate and learn how the microarchitecture should work
-- [ ] Implement the microarchitecture simulator in a Hardware Description Language for execution on an FPGA
-- [ ] Verify that the FPGA works simulated
-- [ ] Verify that the physical FPGA works
+- [ ] Implement the microarchitecture in a Hardware Description Language
+- [ ] Simulate the HDL microarchitecture design
+- [ ] Test the implementation on an FPGA
+- [ ] Design the ASIC
