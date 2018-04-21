@@ -17,7 +17,7 @@ A bare metal physical implementation of WebAssembly. That's right, a WebAssembly
 
 ## Why is this a good idea?
 
-* Maybe it's not
+* Maybe it's not but who cares
 * The world is moving to WebAssembly
 * Some of the biggest and potentially most world-changing projects are implementing their virtual machines as WebAssembly virtual machines (DFINITY, Ethereum)
 * The bytecode is being designed as a compilation target for low-level languages first
