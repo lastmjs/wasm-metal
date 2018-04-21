@@ -11,7 +11,7 @@ A bare metal physical implementation of WebAssembly. That's right, a WebAssembly
   * This simulator will become the specification for the microarchitecture
   * It will allow us to quickly experiment with hardware configurations
   * It will allow us to iterate and learn how the microarchitecture should work
-- [ ] Implement the microarchitecture in a Hardware Description Language
-- [ ] Simulate the HDL microarchitecture design
+- [ ] Implement the microarchitecture as an RTL design in an HDL
+- [ ] Simulate the RTL design
 - [ ] Test the implementation on an FPGA
 - [ ] Design the ASIC
