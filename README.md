@@ -26,3 +26,12 @@ A bare metal physical implementation of WebAssembly. That's right, a WebAssembly
 * Cutting out the translation from WebAssembly to the underlying ISAs could provide efficiency benefits
 * We could get rid of WebAssembly virtual machines entirely, and replace them with WebAssembly physical machines
 * If [all SIM cards are Java processors](https://twitter.com/hedgeberg/status/935380806549286912), imagine what WebAssembly processors could do. I'm betting that WebAssembly is a better bytecode than Java bytecode for what Java bytecode is doing with microcontrollers, so WebAssembly could take over all spaces that Java processors currently have
+
+## Prior art
+
+* https://en.wikipedia.org/wiki/Jazelle
+* https://stackoverflow.com/questions/1153076/does-android-castrate-the-arms-jazelle-technology
+* https://en.wikipedia.org/wiki/Lisp_machine
+* https://en.wikipedia.org/wiki/Java_processor
+* https://en.wikipedia.org/wiki/High-level_language_computer_architecture
+* 
