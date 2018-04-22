@@ -3,11 +3,13 @@ import {createStore} from 'redux';
 
 interface State {
     numberOfRegisters: number;
+    numberOfMemoryLocations: number;
 }
 
 interface Action {
     type: string;
-    numberOfRegisters: number;
+    numberOfRegisters?: number;
+    numberOfMemoryLocations?: number;
 }
 
 interface StateChangeEvent extends CustomEvent {
@@ -17,7 +19,8 @@ interface StateChangeEvent extends CustomEvent {
 }
 
 const InitialState: State = {
-    numberOfRegisters: 10
+    numberOfRegisters: 10,
+    numberOfMemoryLocations: 500
 };
 const RootReducer = (state=InitialState, action: Action) => {
     switch (action.type) {
@@ -25,6 +28,12 @@ const RootReducer = (state=InitialState, action: Action) => {
             return {
                 ...state,
                 numberOfRegisters: action.numberOfRegisters > 0 ? action.numberOfRegisters : 1
+            };
+        }
+        case 'CHANGE_NUMBER_OF_MEMORY_LOCATIONS': {
+            return {
+                ...state,
+                numberOfMemoryLocations: action.numberOfMemoryLocations > 0 ? action.numberOfMemoryLocations : 1
             };
         }
         default: {
@@ -46,6 +55,13 @@ class MetalMicroSimulator extends HTMLElement {
         Store.dispatch({
             type: 'CHANGE_NUMBER_OF_REGISTERS',
             numberOfRegisters: parseInt(e.target.value)
+        });
+    }
+
+    numberOfMemoryLocationsChanged(e) {
+        Store.dispatch({
+            type: 'CHANGE_NUMBER_OF_MEMORY_LOCATIONS',
+            numberOfMemoryLocations: parseInt(e.target.value)
         });
     }
 
@@ -72,6 +88,11 @@ class MetalMicroSimulator extends HTMLElement {
                 Number of registers: <input type="number" value="10" oninput="${(e) => this.numberOfRegistersChanged(e)}">
             </div>
 
+            <div>
+                Number of memory locations: <input type="number" value="500" oninput="${(e) => this.numberOfMemoryLocationsChanged(e)}"
+            </div>
+
+            <br>
             <br>
 
             <div>
@@ -80,6 +101,19 @@ class MetalMicroSimulator extends HTMLElement {
                     return html`
                         <div>
                             ${index}: <input id="register${index}" type="text">
+                        </div>
+                    `;
+                })}
+            </div>
+
+            <br>
+
+            <div>
+                Memory
+                ${new Array(state.numberOfMemoryLocations).fill(0).map((x, index) => {
+                    return html`
+                        <div>
+                            ${index}: <input id="memoryLocation${index}" type="text">
                         </div>
                     `;
                 })}
