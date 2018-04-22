@@ -13,7 +13,7 @@ npm install
 npm start
 ```
 
-Go to `http://localhost:5000` in your web browser.
+Go to [http://localhost:5000](http://localhost:5000) in your web browser.
 
 ### RTL Microarchitecture Simulator
 
