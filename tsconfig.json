@@ -1,0 +1,9 @@
+{
+    "compilerOptions": {
+        "noImplicitAny": true,
+        "strictNullChecks": true,
+        "target": "es6",
+        "allowJs": true,
+        "lib": ["ES2015", "dom"]
+    }
+}

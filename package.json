@@ -1,0 +1,15 @@
+{
+  "name": "wasm-metal",
+  "version": "0.0.0",
+  "description": "A bare metal physical implementation of WebAssembly. That's right, a WebAssembly CPU.",
+  "scripts": {
+    "start": "zwitterion"
+  },
+  "author": "Jordan Last <jordan.michael.last@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "lit-html": "^0.9.0",
+    "redux-store-element": "^2.1.2",
+    "zwitterion": "^0.26.0"
+  }
+}
