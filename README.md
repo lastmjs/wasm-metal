@@ -2,6 +2,27 @@
 
 A bare metal physical implementation of WebAssembly. That's right, a WebAssembly CPU. Inspired in part by [this amazing talk](https://www.destroyallsoftware.com/talks/the-birth-and-death-of-javascript).
 
+## Development
+
+### GUI Microarchitecture Simulator
+
+```bash
+git clone https://github.com/lastmjs/wasm-metal.git
+cd wasm-metal
+npm install
+npm start
+```
+
+Go to `http://localhost:5000` in your web browser.
+
+### RTL Microarchitecture Simulator
+
+Not implemented yet.
+
+### Loading Microarchitecture Implementation to FPGA
+
+Not implemented yet.
+
 ## Roadmap
 
 - [ ] Understand the WebAssembly ISA
@@ -34,4 +55,4 @@ A bare metal physical implementation of WebAssembly. That's right, a WebAssembly
 * https://en.wikipedia.org/wiki/Lisp_machine
 * https://en.wikipedia.org/wiki/Java_processor
 * https://en.wikipedia.org/wiki/High-level_language_computer_architecture
-* 
+*
