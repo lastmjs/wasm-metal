@@ -4,12 +4,14 @@ import {createStore} from 'redux';
 interface State {
     numberOfRegisters: number;
     numberOfMemoryLocations: number;
+    hexCode: string;
 }
 
 interface Action {
     type: string;
     numberOfRegisters?: number;
     numberOfMemoryLocations?: number;
+    hexCode?: string;
 }
 
 interface StateChangeEvent extends CustomEvent {
@@ -19,9 +21,11 @@ interface StateChangeEvent extends CustomEvent {
 }
 
 const InitialState: State = {
-    numberOfRegisters: 10,
-    numberOfMemoryLocations: 500
+    numberOfRegisters: parseInt(window.localStorage.getItem('numberOfRegisters') || '10'),
+    numberOfMemoryLocations: parseInt(window.localStorage.getItem('numberOfMemoryLocations') || '500'),
+    hexCode: window.localStorage.getItem('hexCode') || ''
 };
+
 const RootReducer = (state=InitialState, action: Action) => {
     switch (action.type) {
         case 'CHANGE_NUMBER_OF_REGISTERS': {
@@ -34,6 +38,12 @@ const RootReducer = (state=InitialState, action: Action) => {
             return {
                 ...state,
                 numberOfMemoryLocations: action.numberOfMemoryLocations > 0 ? action.numberOfMemoryLocations : 1
+            };
+        }
+        case 'CHANGE_HEX_CODE': {
+            return {
+                ...state,
+                hexCode: action.hexCode
             };
         }
         default: {
@@ -52,16 +62,29 @@ class MetalMicroSimulator extends HTMLElement {
     }
 
     numberOfRegistersChanged(e) {
+        const numberOfRegisters = parseInt(e.target.value);
+        window.localStorage.setItem('numberOfRegisters', numberOfRegisters.toString());
         Store.dispatch({
             type: 'CHANGE_NUMBER_OF_REGISTERS',
-            numberOfRegisters: parseInt(e.target.value)
+            numberOfRegisters
         });
     }
 
     numberOfMemoryLocationsChanged(e) {
+        const numberOfMemoryLocations = parseInt(e.target.value);
+        window.localStorage.setItem('numberOfMemoryLocations', numberOfMemoryLocations.toString());
         Store.dispatch({
             type: 'CHANGE_NUMBER_OF_MEMORY_LOCATIONS',
-            numberOfMemoryLocations: parseInt(e.target.value)
+            numberOfMemoryLocations
+        });
+    }
+
+    hexCodeInputChanged(e) {
+        const hexCode = e.target.value;
+        window.localStorage.setItem('hexCode', hexCode);
+        Store.dispatch({
+            type: 'CHANGE_HEX_CODE',
+            hexCode
         });
     }
 
@@ -71,9 +94,7 @@ class MetalMicroSimulator extends HTMLElement {
         render(html`
             <style>
                 .hexCodeInput {
-                    display: inline-block;
-                    border: solid 1px black;
-                    min-width: 25vw;
+                    width: 50vw;
                 }
             </style>
 
@@ -81,15 +102,15 @@ class MetalMicroSimulator extends HTMLElement {
             <h2>Microarchitecture Simulator</h2>
 
             <div>
-                Hex code to execute: 0x<span id="hexCodeInput" contenteditable class="hexCodeInput"></span>
+                Hex code to execute: 0x<input type="text" class="hexCodeInput" oninput="${(e) => this.hexCodeInputChanged(e)}" value="${state.hexCode}">
             </div>
 
             <div>
-                Number of registers: <input type="number" value="10" oninput="${(e) => this.numberOfRegistersChanged(e)}">
+                Number of registers: <input type="number" value="${state.numberOfRegisters}" oninput="${(e) => this.numberOfRegistersChanged(e)}">
             </div>
 
             <div>
-                Number of memory locations: <input type="number" value="500" oninput="${(e) => this.numberOfMemoryLocationsChanged(e)}"
+                Number of memory locations: <input type="number" value="${state.numberOfMemoryLocations}" oninput="${(e) => this.numberOfMemoryLocationsChanged(e)}"
             </div>
 
             <br>
