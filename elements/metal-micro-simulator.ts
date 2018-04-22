@@ -5,6 +5,8 @@ interface State {
     numberOfRegisters: number;
     numberOfMemoryLocations: number;
     hexCode: string;
+    currentOpcode: string;
+    hexCodeIndex: number;
 }
 
 interface Action {
@@ -12,6 +14,8 @@ interface Action {
     numberOfRegisters?: number;
     numberOfMemoryLocations?: number;
     hexCode?: string;
+    currentOpcode?: string;
+    hexCodeIndex?: number;
 }
 
 interface StateChangeEvent extends CustomEvent {
@@ -23,7 +27,9 @@ interface StateChangeEvent extends CustomEvent {
 const InitialState: State = {
     numberOfRegisters: parseInt(window.localStorage.getItem('numberOfRegisters') || '10'),
     numberOfMemoryLocations: parseInt(window.localStorage.getItem('numberOfMemoryLocations') || '500'),
-    hexCode: window.localStorage.getItem('hexCode') || ''
+    hexCode: window.localStorage.getItem('hexCode') || '',
+    currentOpcode: '',
+    hexCodeIndex: 0
 };
 
 const RootReducer = (state=InitialState, action: Action) => {
@@ -44,6 +50,12 @@ const RootReducer = (state=InitialState, action: Action) => {
             return {
                 ...state,
                 hexCode: action.hexCode
+            };
+        }
+        case 'CHANGE_CURRENT_OPCODE': {
+            return {
+                ...state,
+                currentOpcode: action.currentOpcode
             };
         }
         default: {
@@ -88,6 +100,15 @@ class MetalMicroSimulator extends HTMLElement {
         });
     }
 
+    stepClick(e) {
+        const state = Store.getState();
+        const currentOpcode = state.hexCode.slice(state.hexCodeIndex, 2);
+        Store.dispatch({
+            type: 'CHANGE_CURRENT_OPCODE',
+            currentOpcode
+        });
+    }
+
     render() {
         const state = Store.getState();
 
@@ -100,6 +121,11 @@ class MetalMicroSimulator extends HTMLElement {
 
             <h1>WASM Metal</h1>
             <h2>Microarchitecture Simulator</h2>
+
+            <button onclick="${(e) => this.stepClick(e)}">Step</button>
+
+            <br>
+            <br>
 
             <div>
                 Hex code to execute: 0x<input type="text" class="hexCodeInput" oninput="${(e) => this.hexCodeInputChanged(e)}" value="${state.hexCode}">
@@ -114,6 +140,12 @@ class MetalMicroSimulator extends HTMLElement {
             </div>
 
             <br>
+            <br>
+
+            <div>
+                Current opcode: <input type="text" value="${state.currentOpcode}">
+            </div>
+
             <br>
 
             <div>

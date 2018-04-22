@@ -1,4 +1,4 @@
-# wasm-metal
+# WASM Metal
 
 A bare metal physical implementation of WebAssembly. That's right, a WebAssembly CPU. Inspired in part by [this amazing talk](https://www.destroyallsoftware.com/talks/the-birth-and-death-of-javascript).
 
