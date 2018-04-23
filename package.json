@@ -3,7 +3,8 @@
   "version": "0.0.0",
   "description": "A bare metal physical implementation of WebAssembly. That's right, a WebAssembly CPU.",
   "scripts": {
-    "start": "zwitterion"
+    "start": "zwitterion",
+    "build-static": "zwitterion --build-static --exclude node_modules --include node_modules/redux/es/redux.js"
   },
   "author": "Jordan Last <jordan.michael.last@gmail.com>",
   "license": "MIT",
