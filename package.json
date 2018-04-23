@@ -9,7 +9,7 @@
   "license": "MIT",
   "dependencies": {
     "lit-html": "^0.9.0",
-    "redux-store-element": "^2.1.2",
+    "redux": "^4.0.0-rc.1",
     "zwitterion": "^0.26.0"
   }
 }
