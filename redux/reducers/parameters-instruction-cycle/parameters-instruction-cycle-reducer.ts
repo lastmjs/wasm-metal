@@ -20,23 +20,23 @@ import {
 export const ParametersInstructionCycleReducer = (state: State, action: Action) => {
     const hexOpcode = parseInt(state.currentOpcode.toLowerCase(), 16);
 
-    if (hexOpcode <= parseInt('11', 16)) {
+    if (hexOpcode <= parseInt('0x11', 16)) {
         return ParametersInstructionCycleControlInstructionsReducer(state, action);
     }
 
-    if (hexOpcode <= parseInt('1B', 16)) {
+    if (hexOpcode <= parseInt('0x1B', 16)) {
         return ParametersInstructionCycleParametricInstructionsReducer(state, action);
     }
 
-    if (hexOpcode <= parseInt('24', 16)) {
+    if (hexOpcode <= parseInt('0x24', 16)) {
         return ParametersInstructionCycleVariableInstructionsReducer(state, action);
     }
 
-    if (hexOpcode <= parseInt('40', 16)) {
+    if (hexOpcode <= parseInt('0x40', 16)) {
         return ParametersInstructionCycleMemoryInstructionsReducer(state, action);
     }
 
-    if (hexOpcode <= parseInt('BF', 16)) {
+    if (hexOpcode <= parseInt('0xBF', 16)) {
         return ParametersInstructionCycleNumericInstructionsReducer(state, action);
     }
 
