@@ -4,7 +4,7 @@ A bare metal physical implementation of WebAssembly. That's right, a WebAssembly
 
 ## GUI Microarchitecture Simulator
 
-View the [live demo](wasm-metal-demo.netlify.com).
+View the [live demo](https://wasm-metal-demo.netlify.com).
 
 ```bash
 git clone https://github.com/lastmjs/wasm-metal.git
