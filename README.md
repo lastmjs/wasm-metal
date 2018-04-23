@@ -25,16 +25,16 @@ Not implemented yet.
 
 ## Roadmap
 
-- [ ] Understand the WebAssembly ISA
-- [ ] Implement the mircoarchitecture in HTML/CSS/JavaScript
+- [ ] Understand the WebAssembly [ISA](https://en.wikipedia.org/wiki/Instruction_set_architecture)
+- [ ] Implement the [mircoarchitecture](https://en.wikipedia.org/wiki/Microarchitecture) in HTML/CSS/JavaScript
   * This will be a GUI simulator of the microarchitecture
   * This simulator will become the specification for the microarchitecture
   * It will allow us to quickly experiment with hardware configurations
   * It will allow us to iterate and learn how the microarchitecture should work
-- [ ] Implement the microarchitecture as an RTL design in an HDL
+- [ ] Implement the microarchitecture as an [RTL design](https://en.wikipedia.org/wiki/Register-transfer_level#RTL_description) in an [HDL](https://en.wikipedia.org/wiki/Hardware_description_language)
 - [ ] Simulate the RTL design
-- [ ] Test the implementation on an FPGA
-- [ ] Design the ASIC
+- [ ] Test the implementation on an [FPGA](https://en.wikipedia.org/wiki/Field-programmable_gate_array)
+- [ ] Design the [ASIC](https://en.wikipedia.org/wiki/Application-specific_integrated_circuit)
 
 ## Why is this a good idea?
 
