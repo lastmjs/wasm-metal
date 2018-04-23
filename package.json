@@ -8,6 +8,7 @@
   },
   "author": "Jordan Last <jordan.michael.last@gmail.com>",
   "license": "MIT",
+  "typings": "wasm-metal.d.ts",
   "dependencies": {
     "lit-html": "^0.9.0",
     "redux": "^4.0.0-rc.1",
