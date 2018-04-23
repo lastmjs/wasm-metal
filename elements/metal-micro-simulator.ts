@@ -7,6 +7,10 @@ interface State {
     hexCode: string;
     currentOpcode: string;
     hexCodeIndex: number;
+    instructionCycle: 'OPCODE' | 'PARAMETERS' | 'COMPUTE' | 'RESULT';
+    registers: string[];
+    currentResult: '';
+    numberOfCycles: number;
 }
 
 interface Action {
@@ -29,7 +33,11 @@ const InitialState: State = {
     numberOfMemoryLocations: parseInt(window.localStorage.getItem('numberOfMemoryLocations') || '500'),
     hexCode: window.localStorage.getItem('hexCode') || '',
     currentOpcode: '',
-    hexCodeIndex: 0
+    hexCodeIndex: 0,
+    instructionCycle: 'OPCODE',
+    registers: [],
+    currentResult: '',
+    numberOfCycles: 0
 };
 
 const RootReducer = (state=InitialState, action: Action) => {
@@ -37,13 +45,13 @@ const RootReducer = (state=InitialState, action: Action) => {
         case 'CHANGE_NUMBER_OF_REGISTERS': {
             return {
                 ...state,
-                numberOfRegisters: action.numberOfRegisters > 0 ? action.numberOfRegisters : 1
+                numberOfRegisters: action.numberOfRegisters && action.numberOfRegisters > 0 ? action.numberOfRegisters : 1
             };
         }
         case 'CHANGE_NUMBER_OF_MEMORY_LOCATIONS': {
             return {
                 ...state,
-                numberOfMemoryLocations: action.numberOfMemoryLocations > 0 ? action.numberOfMemoryLocations : 1
+                numberOfMemoryLocations: action.numberOfMemoryLocations && action.numberOfMemoryLocations > 0 ? action.numberOfMemoryLocations : 1
             };
         }
         case 'CHANGE_HEX_CODE': {
@@ -52,11 +60,74 @@ const RootReducer = (state=InitialState, action: Action) => {
                 hexCode: action.hexCode
             };
         }
-        case 'CHANGE_CURRENT_OPCODE': {
-            return {
-                ...state,
-                currentOpcode: action.currentOpcode
-            };
+        case 'STEP': {
+            switch (state.instructionCycle) {
+                case 'OPCODE': {
+                    const currentOpcode = state.hexCode.slice(state.hexCodeIndex, 2);
+                    const newHexCodeIndex = state.hexCodeIndex + 2;
+
+                    return {
+                        ...state,
+                        currentOpcode,
+                        hexCodeIndex: newHexCodeIndex,
+                        instructionCycle: 'PARAMETERS',
+                        numberOfCycles: state.numberOfCycles + 1
+                    };
+                }
+                case 'PARAMETERS': {
+                    //TODO Find out which hardware execution unit will need to do this
+                    switch(state.currentOpcode.toLowerCase()) {
+                        case '6a': {
+                            const param1 = state.hexCode.slice(state.hexCodeIndex, state.hexCodeIndex + 2);
+                            const param2 = state.hexCode.slice(state.hexCodeIndex + 2, state.hexCodeIndex + 4);
+                            const newHexCodeIndex = state.hexCodeIndex + 4;
+
+                            return {
+                                ...state,
+                                instructionCycle: 'COMPUTE',
+                                registers: [param1, param2],
+                                hexCodeIndex: newHexCodeIndex,
+                                numberOfCycles: state.numberOfCycles + 1
+                            };
+                        }
+                        default: {
+                            throw new Error(`Opcode ${state.currentOpcode} not defined`);
+                        }
+                    }
+                }
+                case 'COMPUTE': {
+                    //TODO Find out which hardware execution unit will need to do this
+                    switch(state.currentOpcode.toLowerCase()) {
+                        case '6a': {
+                            const param1 = state.registers[0];
+                            const param2 = state.registers[1];
+
+                            const result = parseInt(param1 + param2, 8).toString(); //TODO Emulate how the hardware will do this calculation
+
+                            return {
+                                ...state,
+                                currentResult: result,
+                                instructionCycle: 'RESULT',
+                                numberOfCycles: state.numberOfCycles + 1
+                            };
+                        }
+                        default: {
+                            throw new Error(`Opcode ${state.currentOpcode} not defined`);
+                        }
+                    }
+                }
+                case 'RESULT': {
+                    return {
+                        ...state,
+                        registers: [state.currentResult],
+                        instructionCycle: 'OPCODE',
+                        numberOfCycles: state.numberOfCycles + 1
+                    }
+                }
+                default: {
+                    return state;
+                }
+            }
         }
         default: {
             return state;
@@ -73,7 +144,7 @@ class MetalMicroSimulator extends HTMLElement {
         this.render();
     }
 
-    numberOfRegistersChanged(e) {
+    numberOfRegistersChanged(e: any) {
         const numberOfRegisters = parseInt(e.target.value);
         window.localStorage.setItem('numberOfRegisters', numberOfRegisters.toString());
         Store.dispatch({
@@ -82,7 +153,7 @@ class MetalMicroSimulator extends HTMLElement {
         });
     }
 
-    numberOfMemoryLocationsChanged(e) {
+    numberOfMemoryLocationsChanged(e: any) {
         const numberOfMemoryLocations = parseInt(e.target.value);
         window.localStorage.setItem('numberOfMemoryLocations', numberOfMemoryLocations.toString());
         Store.dispatch({
@@ -91,7 +162,7 @@ class MetalMicroSimulator extends HTMLElement {
         });
     }
 
-    hexCodeInputChanged(e) {
+    hexCodeInputChanged(e: any) {
         const hexCode = e.target.value;
         window.localStorage.setItem('hexCode', hexCode);
         Store.dispatch({
@@ -100,12 +171,9 @@ class MetalMicroSimulator extends HTMLElement {
         });
     }
 
-    stepClick(e) {
-        const state = Store.getState();
-        const currentOpcode = state.hexCode.slice(state.hexCodeIndex, 2);
+    stepClick(e: Event) {
         Store.dispatch({
-            type: 'CHANGE_CURRENT_OPCODE',
-            currentOpcode
+            type: 'STEP'
         });
     }
 
@@ -122,21 +190,28 @@ class MetalMicroSimulator extends HTMLElement {
             <h1>WASM Metal</h1>
             <h2>Microarchitecture Simulator</h2>
 
-            <button onclick="${(e) => this.stepClick(e)}">Step</button>
+            <div>
+                <button onclick="${(e: Event) => this.stepClick(e)}">${state.instructionCycle}</button>
+            </div>
 
-            <br>
             <br>
 
             <div>
-                Hex code to execute: 0x<input type="text" class="hexCodeInput" oninput="${(e) => this.hexCodeInputChanged(e)}" value="${state.hexCode}">
+                Cycles: ${state.numberOfCycles}
+            </div>
+
+            <br>
+
+            <div>
+                Hex code to execute: 0x<input type="text" class="hexCodeInput" oninput="${(e: Event) => this.hexCodeInputChanged(e)}" value="${state.hexCode}">
             </div>
 
             <div>
-                Number of registers: <input type="number" value="${state.numberOfRegisters}" oninput="${(e) => this.numberOfRegistersChanged(e)}">
+                Number of registers: <input type="number" value="${state.numberOfRegisters}" oninput="${(e: Event) => this.numberOfRegistersChanged(e)}">
             </div>
 
             <div>
-                Number of memory locations: <input type="number" value="${state.numberOfMemoryLocations}" oninput="${(e) => this.numberOfMemoryLocationsChanged(e)}"
+                Number of memory locations: <input type="number" value="${state.numberOfMemoryLocations}" oninput="${(e: Event) => this.numberOfMemoryLocationsChanged(e)}"
             </div>
 
             <br>
@@ -149,11 +224,17 @@ class MetalMicroSimulator extends HTMLElement {
             <br>
 
             <div>
+                Current result: <input type="text" value="${state.currentResult}">
+            </div>
+
+            <br>
+
+            <div>
                 Registers
                 ${new Array(state.numberOfRegisters).fill(0).map((x, index) => {
                     return html`
                         <div>
-                            ${index}: <input id="register${index}" type="text">
+                            ${index}: <input id="register${index}" type="text" value="${state.registers[index] !== undefined ? state.registers[index] : ''}">
                         </div>
                     `;
                 })}
