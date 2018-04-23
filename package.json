@@ -10,8 +10,8 @@
   "license": "MIT",
   "typings": "wasm-metal.d.ts",
   "dependencies": {
-    "lit-html": "^0.9.0",
-    "redux": "^4.0.0-rc.1",
-    "zwitterion": "^0.27.0"
+    "lit-html": "0.9.0",
+    "redux": "4.0.0-rc.1",
+    "zwitterion": "0.27.0"
   }
 }
