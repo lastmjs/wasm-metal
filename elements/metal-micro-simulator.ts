@@ -63,7 +63,7 @@ const RootReducer = (state=InitialState, action: Action) => {
         case 'STEP': {
             switch (state.instructionCycle) {
                 case 'OPCODE': {
-                    const currentOpcode = state.hexCode.slice(state.hexCodeIndex, 2);
+                    const currentOpcode = state.hexCode.slice(state.hexCodeIndex, state.hexCodeIndex + 2);
                     const newHexCodeIndex = state.hexCodeIndex + 2;
 
                     return {
