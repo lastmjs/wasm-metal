@@ -7,7 +7,7 @@ export interface State {
     registers: string[];
     currentResult: '';
     cyclesElapsed: number;
-    memoryLocations: string[];
+    memory: string[];
     programCounter: string;
     memoryAddressRegister: string;
     memoryDataRegister: string;
@@ -15,7 +15,7 @@ export interface State {
     parameterCountRegister: string;
     parameterDecoder: ParameterDecoder;
     parameterMux: ParameterMux;
-    parameterDecrementer: string;
+    parameterDecrementer: ParameterDecrementer;
 }
 
 export interface Action {
@@ -46,5 +46,10 @@ interface ParameterDecoder {
 interface ParameterMux {
     input0: string;
     input1: string;
+    output: string;
+}
+
+interface ParameterDecrementer {
+    input: string;
     output: string;
 }

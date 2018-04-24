@@ -2,7 +2,9 @@ import {html, render} from 'lit-html/lib/lit-extended.js';
 import {
     State
 } from '../wasm-metal.d';
-import {Store} from '../redux/redux-store'
+import {Store} from '../redux/redux-store';
+import './metal-registers';
+import './metal-memory';
 
 class MetalMicroSimulator extends HTMLElement {
     constructor() {
@@ -126,29 +128,11 @@ class MetalMicroSimulator extends HTMLElement {
 
             <br>
 
-            <div>
-                Registers
-                ${new Array(state.numberOfRegisters).fill(0).map((x, index) => {
-                    return html`
-                        <div>
-                            ${index}: <input id="register${index}" type="text" value="${state.registers[index] !== undefined ? state.registers[index] : ''}">
-                        </div>
-                    `;
-                })}
-            </div>
+            <metal-registers registers="${state.registers}"></metal-registers>
 
             <br>
 
-            <div>
-                Memory
-                ${new Array(state.numberOfMemoryLocations).fill(0).map((x, index) => {
-                    return html`
-                        <div>
-                            ${index}: <input id="memoryLocation${index}" type="text" value="${state.memoryLocations[index]}">
-                        </div>
-                    `;
-                })}
-            </div>
+            <metal-memory memory="${state.memory}"></metal-memory>
         `, this);
     }
 }

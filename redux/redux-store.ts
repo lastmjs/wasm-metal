@@ -7,16 +7,19 @@ import {
     Action
 } from '../wasm-metal.d';
 
+const numberOfRegisters = parseInt(window.localStorage.getItem('numberOfRegisters') || '10');
+const numberOfMemoryLocations = parseInt(window.localStorage.getItem('numberOfMemoryLocations') || '500');
+
 const InitialState: State = {
-    numberOfRegisters: parseInt(window.localStorage.getItem('numberOfRegisters') || '10'),
-    numberOfMemoryLocations: parseInt(window.localStorage.getItem('numberOfMemoryLocations') || '500'),
+    numberOfRegisters,
+    numberOfMemoryLocations,
     sourceCode: window.localStorage.getItem('sourceCode') || '',
     phase: 'OPCODE',
     opcodePhaseStep: 0,
-    registers: [],
+    registers: new Array(numberOfRegisters).fill(''),
     currentResult: '',
     cyclesElapsed: 0,
-    memoryLocations: [],
+    memory: new Array(numberOfMemoryLocations).fill(''),
     programCounter: '0x0',
     memoryAddressRegister: '',
     memoryDataRegister: '',
@@ -38,7 +41,10 @@ const InitialState: State = {
         input1: '',
         output: ''
     },
-    parameterDecrementer: '0x1'
+    parameterDecrementer: {
+        input: '',
+        output: ''
+    }
 };
 
 const RootReducer = (state=InitialState, action: Action) => {
@@ -46,14 +52,14 @@ const RootReducer = (state=InitialState, action: Action) => {
     if (action.type === 'CHANGE_NUMBER_OF_REGISTERS') {
         return {
             ...state,
-            numberOfRegisters: action.numberOfRegisters && action.numberOfRegisters > 0 ? action.numberOfRegisters : 1
+            registers: new Array(action.numberOfRegisters && action.numberOfRegisters > 0 ? action.numberOfRegisters : 1).fill('')
         };
     }
 
     if (action.type === 'CHANGE_NUMBER_OF_MEMORY_LOCATIONS') {
         return {
             ...state,
-            numberOfMemoryLocations: action.numberOfMemoryLocations && action.numberOfMemoryLocations > 0 ? action.numberOfMemoryLocations : 1
+            memory: new Array(action.numberOfMemoryLocations && action.numberOfMemoryLocations > 0 ? action.numberOfMemoryLocations : 1).fill('')
         };
     }
 
@@ -67,19 +73,19 @@ const RootReducer = (state=InitialState, action: Action) => {
     if (action.type === 'LOAD_SOURCE_CODE_INTO_MEMORY') {
         return {
             ...state,
-            memoryLocations: state.sourceCode.split('').reduce((result, character, index, array) => {
+            memory: state.sourceCode.split('').reduce((result, character, index, array) => {
                 if (index >= array.length / 2) {
                     return result;
                 }
                 else {
                     return {
                         ...result,
-                        finalArray: [...result.finalArray, `${array[result.index]}${array[result.index + 1]}`],
+                        finalArray: [...result.finalArray.slice(0, index), `${array[result.index]}${array[result.index + 1]}`, ...result.finalArray.slice(index + 1)],
                         index: result.index + 2
                     };
                 }
             }, {
-                finalArray: [],
+                finalArray: state.memory,
                 index: 0
             }).finalArray
         };
@@ -103,7 +109,7 @@ const RootReducer = (state=InitialState, action: Action) => {
 
             if (state.opcodePhaseStep === 1) {
                 const opcodePhaseStep = 2;
-                const memoryDataRegister = `0x${state.memoryLocations[parseInt(state.memoryAddressRegister, 16)]}`;
+                const memoryDataRegister = `0x${state.memory[parseInt(state.memoryAddressRegister, 16)]}`;
                 const programCounter = `0x${(parseInt(state.programCounter, 16) + 1).toString(16)}`;
                 const memoryAddressRegister = programCounter;
                 const cyclesElapsed = state.cyclesElapsed + 1;
@@ -127,12 +133,16 @@ const RootReducer = (state=InitialState, action: Action) => {
                     output0: state.parameterDecoder.table[opcodeRegister].parameterSize,
                     output1: state.parameterDecoder.table[opcodeRegister].parameterCount
                 };
+                const parameterDecrementer = {
+                    input: state.parameterCountRegister,
+                    output: parseInt(state.parameterDecrementer.input, 16) - 1
+                };
                 const parameterMux = {
                     ...state.parameterMux,
                     input0: parameterDecoder.output1,
-                    input1: state.parameterDecrementer,
-                    output: (1 + parseInt(parameterDecoder.output1, 16) - parseInt(state.parameterDecrementer, 16)).toString(16)
-                }; //TODO figure out why we have to add 1 to the decrementer above
+                    input1: parameterDecrementer.output,
+                    output: state.phase === 'OPCODE' ? parameterDecoder.output1 : parameterDecrementer.output
+                };
                 const parameterCountRegister = parameterMux.output;
 
                 return {
@@ -140,6 +150,7 @@ const RootReducer = (state=InitialState, action: Action) => {
                     opcodePhaseStep,
                     opcodeRegister,
                     parameterDecoder,
+                    parameterDecrementer,
                     parameterMux,
                     parameterCountRegister
                 };
