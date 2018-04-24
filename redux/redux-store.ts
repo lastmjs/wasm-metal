@@ -16,7 +16,8 @@ const InitialState: State = {
     instructionCycle: 'OPCODE',
     registers: [],
     currentResult: '',
-    numberOfCycles: 0
+    numberOfCycles: 0,
+    memory: []
 };
 
 const RootReducer = (state=InitialState, action: Action) => {
@@ -37,6 +38,26 @@ const RootReducer = (state=InitialState, action: Action) => {
             return {
                 ...state,
                 hexCode: action.hexCode
+            };
+        }
+        case 'LOAD_HEX_CODE_INTO_MEMORY':{
+            return {
+                ...state,
+                memory: state.hexCode.split('').reduce((result, character, index, array) => {
+                    if (index >= array.length / 2) {
+                        return result;
+                    }
+                    else {
+                        return {
+                            ...result,
+                            finalArray: [...result.finalArray, `${array[result.index]}${array[result.index + 1]}`],
+                            index: result.index + 2
+                        };
+                    }
+                }, {
+                    finalArray: [],
+                    index: 0
+                }).finalArray
             };
         }
         case 'STEP': {

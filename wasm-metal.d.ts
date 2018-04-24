@@ -8,6 +8,7 @@ export interface State {
     registers: string[];
     currentResult: '';
     numberOfCycles: number;
+    memory: string[];
 }
 
 export interface Action {

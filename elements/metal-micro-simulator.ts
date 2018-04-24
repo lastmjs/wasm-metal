@@ -44,6 +44,12 @@ class MetalMicroSimulator extends HTMLElement {
         });
     }
 
+    loadClick(e: any) {
+        Store.dispatch({
+            type: 'LOAD_HEX_CODE_INTO_MEMORY'
+        });
+    }
+
     render() {
         const state: State = Store.getState();
 
@@ -70,7 +76,7 @@ class MetalMicroSimulator extends HTMLElement {
             <br>
 
             <div>
-                Hex code to execute: 0x<input type="text" class="hexCodeInput" oninput="${(e: Event) => this.hexCodeInputChanged(e)}" value="${state.hexCode}">
+                Source code: 0x<input type="text" class="hexCodeInput" oninput="${(e: Event) => this.hexCodeInputChanged(e)}" value="${state.hexCode}"> <button onclick="${(e: Event) => this.loadClick(e)}">Load</button>
             </div>
 
             <div>
@@ -114,7 +120,7 @@ class MetalMicroSimulator extends HTMLElement {
                 ${new Array(state.numberOfMemoryLocations).fill(0).map((x, index) => {
                     return html`
                         <div>
-                            ${index}: <input id="memoryLocation${index}" type="text">
+                            ${index}: <input id="memoryLocation${index}" type="text" value="${state.memory[index]}">
                         </div>
                     `;
                 })}
