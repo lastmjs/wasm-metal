@@ -2,7 +2,7 @@ import {
     State, Action
 } from '../../../wasm-metal.d';
 
-export const ParametersInstructionCycleNumericInstructionsReducer = (state: State, action: Action) => {
+export const ParametersPhaseNumericInstructionsReducer = (state: State, action: Action) => {
     //TODO Find out which hardware execution unit will need to do this
     switch(state.currentOpcode.toLowerCase()) {
         case '6a': {
