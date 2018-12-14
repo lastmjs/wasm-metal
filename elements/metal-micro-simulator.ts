@@ -2,7 +2,9 @@ import {html, render} from 'lit-html/lib/lit-extended.js';
 import {
     State
 } from '../wasm-metal.d';
-import {Store} from '../redux/redux-store'
+import {Store} from '../redux/redux-store';
+import './metal-registers';
+import './metal-memory';
 
 class MetalMicroSimulator extends HTMLElement {
     constructor() {
@@ -29,12 +31,12 @@ class MetalMicroSimulator extends HTMLElement {
         });
     }
 
-    hexCodeInputChanged(e: any) {
-        const hexCode = e.target.value;
-        window.localStorage.setItem('hexCode', hexCode);
+    sourceCodeInputChanged(e: any) {
+        const sourceCode = e.target.value;
+        window.localStorage.setItem('sourceCode', sourceCode);
         Store.dispatch({
-            type: 'CHANGE_HEX_CODE',
-            hexCode
+            type: 'CHANGE_SOURCE_CODE',
+            sourceCode
         });
     }
 
@@ -46,7 +48,7 @@ class MetalMicroSimulator extends HTMLElement {
 
     loadClick(e: any) {
         Store.dispatch({
-            type: 'LOAD_HEX_CODE_INTO_MEMORY'
+            type: 'LOAD_SOURCE_CODE_INTO_MEMORY'
         });
     }
 
@@ -64,19 +66,19 @@ class MetalMicroSimulator extends HTMLElement {
             <h2>Microarchitecture Simulator</h2>
 
             <div>
-                <button onclick="${(e: Event) => this.stepClick(e)}">${state.instructionCycle}</button>
+                <button onclick="${(e: Event) => this.stepClick(e)}">${state.phase}</button>
             </div>
 
             <br>
 
             <div>
-                Cycles: ${state.numberOfCycles}
+                Cycles: ${state.cyclesElapsed}
             </div>
 
             <br>
 
             <div>
-                Source code: 0x<input type="text" class="hexCodeInput" oninput="${(e: Event) => this.hexCodeInputChanged(e)}" value="${state.hexCode}"> <button onclick="${(e: Event) => this.loadClick(e)}">Load</button>
+                Source code: 0x<input type="text" class="sourceCodeInput" oninput="${(e: Event) => this.sourceCodeInputChanged(e)}" value="${state.sourceCode}"> <button onclick="${(e: Event) => this.loadClick(e)}">Load</button>
             </div>
 
             <div>
@@ -91,40 +93,46 @@ class MetalMicroSimulator extends HTMLElement {
             <br>
 
             <div>
-                Current opcode: <input type="text" value="${state.currentOpcode}">
-            </div>
-
-            <br>
-
-            <div>
                 Current result: <input type="text" value="${state.currentResult}">
             </div>
 
             <br>
 
             <div>
-                Registers
-                ${new Array(state.numberOfRegisters).fill(0).map((x, index) => {
-                    return html`
-                        <div>
-                            ${index}: <input id="register${index}" type="text" value="${state.registers[index] !== undefined ? state.registers[index] : ''}">
-                        </div>
-                    `;
-                })}
+                Program Counter: <input type="text" value="${state.programCounter}">
             </div>
 
             <br>
 
             <div>
-                Memory
-                ${new Array(state.numberOfMemoryLocations).fill(0).map((x, index) => {
-                    return html`
-                        <div>
-                            ${index}: <input id="memoryLocation${index}" type="text" value="${state.memory[index]}">
-                        </div>
-                    `;
-                })}
+                Memory Address Register: <input type="text" value="${state.memoryAddressRegister}">
             </div>
+
+            <br>
+
+            <div>
+                Memory Data Register: <input type="text" value="${state.memoryDataRegister}">
+            </div>
+
+            <br>
+
+            <div>
+                Opcode Register: <input type="text" value="${state.opcodeRegister}">
+            </div>
+
+            <br>
+
+            <div>
+                Parameter Count Register: <input type="text" value="${state.parameterCountRegister}">
+            </div>
+
+            <br>
+
+            <metal-registers registers="${state.registers}"></metal-registers>
+
+            <br>
+
+            <metal-memory memory="${state.memory}"></metal-memory>
         `, this);
     }
 }
