@@ -60,7 +60,7 @@ class MetalMicroSimulator extends HTMLElement {
                 }
             </style>
 
-            <h1>WASM Metal</h1>
+            <h1>Wasm metal</h1>
             <h2>Microarchitecture Simulator</h2>
 
             <div>
